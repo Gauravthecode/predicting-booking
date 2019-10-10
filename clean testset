@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns 
+%matplotlib inline
+test = pd.read_csv('test.csv', parse_dates=['datetime'])
+test_label = pd.read_csv('test_label.csv', header = None)
+test['label'] = test_label
+# to make our data in accordance with training set 'holiday ' will have to go 
+test.drop('holiday', axis=1, inplace=True)
+# i dont think we need to remove outliers from test dataset
+# else what would be the use of model
+# but the structure needs to be same
+test = test.join(pd.get_dummies(test.weather))
+test.insert(10,' Heavy Rain + Thunderstorm ', 0, allow_duplicates=True)
+test = test.join(pd.get_dummies(test.season))
+test.drop(['season', 'weather'], axis=1, inplace=True)
+test = test.join(pd.get_dummies(test.datetime.dt.year))
+test = test.join(pd.get_dummies(test.datetime.dt.month, prefix='month'))
+test = test.join(pd.get_dummies(test.datetime.dt.quarter, prefix = 'quarter'))
+test = test.join(pd.get_dummies(test.datetime.dt.day, prefix = 'day'))
+test = test.join(pd.get_dummies(test.datetime.dt.hour, prefix='hour'))
+test = test.join(pd.get_dummies(test.datetime.dt.weekofyear, prefix='week_no'))
+test.to_csv('cleaned_test.csv', index = False)
+
