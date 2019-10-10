@@ -1,0 +1,136 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+train = pd.read_csv('train.csv', parse_dates=['datetime'])
+train_label = pd.read_csv('train_label.csv', header = None)
+train['label'] = train_label
+print(train.corr().label)
+                                 holiday      -0.004391
+                                 workingday    0.012285
+                                 temp          0.397456
+     OUTPUT                      atemp         0.392754
+                                 humidity     -0.307982
+                                 windspeed     0.092090
+                                 label         1.000000
+                                 Name: label, dtype: float64
+
+# From this we can see that holidays have very low correlation with label column so it will have low impact on booking fare
+
+train.drop(['holiday'], axis=1, inplace=True)
+## visualising different columns to gain insights
+
+sns.boxplot(train.label)
+plt.xlabel('booking fares')
+plt.show()
+![image](https://user-images.githubusercontent.com/52886443/66603985-d7536a00-ebca-11e9-8aa1-8d82cac60c2a.png)
+
+# Here the label column(booking fares) have a number of outliers but remember outliers in label do not affect the model
+
+sns.boxplot(train.temp)
+plt.xlabel('temperature')
+plt.savefig('temperature.png')
+![image](https://user-images.githubusercontent.com/52886443/66604690-47aebb00-ebcc-11e9-86e6-1ce76b301ba2.png)
+# temperature colm has no outliers
+
+sns.boxplot(train.atemp)
+plt.xlabel('temperature_felt.png')
+plt.savefig('temperature_felt.png')
+![image](https://user-images.githubusercontent.com/52886443/66604796-73ca3c00-ebcc-11e9-9f53-3a13992d46ca.png)
+# temperature_felt too has no outliers
+
+sns.boxplot(train.windspeed)
+plt.xlabel('windspeed')
+plt.savefig('windspeed.png')
+![image](https://user-images.githubusercontent.com/52886443/66604915-b5f37d80-ebcc-11e9-821b-349387700485.png)
+# since windspeed has ooutliers so they need to be removed
+# removing outliers of windspeed column
+
+q1 = train.windspeed.quantile(0.25)
+q2 = train.windspeed.quantile(0.75)
+IQR = q2-q1
+train = train[train.windspeed < (q2 + (1.5*IQR))]
+
+# weather column has categorical values so they need to be converted into dummy varibles
+train = train.join(pd.get_dummies(train.weather))
+train.drop('weather', axis=1, inplace = True)
+
+# season column too has categorical values so they again need to be turned dummy variables
+train = train.join(pd.get_dummies(train.season))
+train.drop('season', axis= 1, inplace = True)
+
+## cab booking is highly influenced by the date , month or quarter, so we will analyse them differently
+df = pd.DataFrame(train.datetime.dt.year)
+df['label'] = train.label
+print(df.corr())
+                 	         datetime	label
+   OUTPUT        datetime	 1.000000	0.265171
+                 label	   0.265171	1.000000
+# since the correlation is quite well so year must be added to trainset as dummy variable
+train = train.join(pd.get_dummies(train.datetime.dt.year))
+
+-->
+df = pd.DataFrame(train.datetime.dt.month)
+df['label'] = train.label
+print(df.corr())
+                  	         datetime	label
+   OUTPUT         datetime	 1.000000	0.167195
+                  label	     0.167195	1.000000
+# again a well relation so again add this to trainset 
+train = train.join(pd.get_dummies(train.datetime.dt.month, prefix='month'))
+
+-->
+df = pd.DataFrame(train.datetime.dt.dayofweek)
+df['label'] = train.label
+print(df.corr())
+                    	         datetime	label
+  OUTPUT            datetime	 1.000000	-0.005734
+                    label	     -0.005734	1.000000
+# this does not show a well relation with the label so drop this column
+
+df = pd.DataFrame(train.datetime.dt.quarter)
+df['label'] = train.label
+print(df.corr())
+                              datetime     label
+  OUTPUT            datetime  1.000000  0.163267
+                    label     0.163267  1.000000
+# this again is a well relation so add this too
+train = train.join(pd.get_dummies(train.datetime.dt.quarter, prefix = 'quarter'))
+
+df = pd.DataFrame(train.datetime.dt.day)
+df['label'] = train.label
+print(df.corr())
+                              datetime     label
+   OUTPUT           datetime  1.000000  0.024709
+                    label     0.024709  1.000000
+# this show a low corrlation but a good one
+train = train.join(pd.get_dummies(train.datetime.dt.day, prefix='day'))
+-->
+df = pd.DataFrame(train.datetime.dt.hour)
+df['label'] = train.label
+df.corr()
+                              datetime     label
+  OUTPUT            datetime  1.000000  0.403229
+                    label     0.403229  1.000000
+# this show the best correlation till now with datatime
+train = train.join(pd.get_dummies(train.datetime.dt.hour, prefix='hour'))
+-->
+df = pd.DataFrame(train.datetime.dt.weekofyear)
+df['label'] = train.label
+print(df.corr())
+                              datetime     label
+  OUTPUT            datetime  1.000000  0.153475
+                    label     0.153475  1.000000
+# this shows a well relation so adding this too
+train = train.join(pd.get_dummies(train.datetime.dt.weekofyear, prefix='week_no'))
+
+
+train.to_csv('cleaned_train.csv', index=False)
+
+
+# congrats train-data is cleaned
+
+
+
+
