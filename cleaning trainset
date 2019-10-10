@@ -24,26 +24,26 @@ train.drop(['holiday'], axis=1, inplace=True)
 sns.boxplot(train.label)
 plt.xlabel('booking fares')
 plt.show()
-![image](https://user-images.githubusercontent.com/52886443/66603985-d7536a00-ebca-11e9-8aa1-8d82cac60c2a.png)
+#![image](https://user-images.githubusercontent.com/52886443/66603985-d7536a00-ebca-11e9-8aa1-8d82cac60c2a.png)
 
 # Here the label column(booking fares) have a number of outliers but remember outliers in label do not affect the model
 
 sns.boxplot(train.temp)
 plt.xlabel('temperature')
 plt.savefig('temperature.png')
-![image](https://user-images.githubusercontent.com/52886443/66604690-47aebb00-ebcc-11e9-86e6-1ce76b301ba2.png)
+#![image](https://user-images.githubusercontent.com/52886443/66604690-47aebb00-ebcc-11e9-86e6-1ce76b301ba2.png)
 # temperature colm has no outliers
 
 sns.boxplot(train.atemp)
 plt.xlabel('temperature_felt.png')
 plt.savefig('temperature_felt.png')
-![image](https://user-images.githubusercontent.com/52886443/66604796-73ca3c00-ebcc-11e9-9f53-3a13992d46ca.png)
+#![image](https://user-images.githubusercontent.com/52886443/66604796-73ca3c00-ebcc-11e9-9f53-3a13992d46ca.png)
 # temperature_felt too has no outliers
 
 sns.boxplot(train.windspeed)
 plt.xlabel('windspeed')
 plt.savefig('windspeed.png')
-![image](https://user-images.githubusercontent.com/52886443/66604915-b5f37d80-ebcc-11e9-821b-349387700485.png)
+#![image](https://user-images.githubusercontent.com/52886443/66604915-b5f37d80-ebcc-11e9-821b-349387700485.png)
 # since windspeed has ooutliers so they need to be removed
 # removing outliers of windspeed column
 
