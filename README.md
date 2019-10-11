@@ -14,3 +14,6 @@ And the accuracy on test set comes out to be 91.5%
 Again values are negative as well as having low accuracy of 80.15% on test set
 ![image](https://user-images.githubusercontent.com/52886443/66635550-1914fc80-ec2d-11e9-8a89-4a26d71e3082.png)
 
+### From the above it can be seen that only Random Forest predicts the booking(fare) well
+Now After using AdaBoost to optimize the performance of Random Forest 
+
